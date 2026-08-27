@@ -1,0 +1,145 @@
+# Default pipeline configuration.
+#
+# Every stage takes a LiteLLM parameter block, so any LiteLLM-compatible
+# provider works. This default routes every stage through OpenAI so a fresh
+# checkout runs with a single OPENAI_API_KEY. To use a different provider,
+# copy this file, edit the `model` / credential fields, and point
+# TASK_MODEL_INDUCTION_CONFIG at your copy.
+
+dotenv_path: ".env"
+
+action_grounding_stage:
+  grounding_url: "http://localhost:8000"
+  max_concurrent_requests: 32
+
+semantic_action_induction:
+  input_file_name: processed_trajectory_with_goals.jsonl
+  output_file_name: atom_semantic_actions.jsonl
+  induction_litellm_config:
+    model: openai/gpt-5.4-mini
+    api_key: os.environ/OPENAI_API_KEY
+  enrichment_litellm_config:
+    model: openai/gpt-5-nano
+    api_key: os.environ/OPENAI_API_KEY
+  enrichment_workers: 128
+  backward_batch_size: 40
+  backward_batch_overlap: 4
+  backward_workers: 32
+  max_future_semantic_actions: 8
+  merge_batch_size: 40
+  merge_batch_overlap: 2
+  max_prior_semantic_actions: 8
+
+activity_induction:
+  input_file_name: atom_semantic_actions.jsonl
+  output_file_name: activity.jsonl
+  litellm_params:
+    model: openai/gpt-5.4-mini
+    api_key: os.environ/OPENAI_API_KEY
+  segmentation_batch_size: 40
+  merge_batch_size: 16
+  merge_batch_overlap: 2
+  max_prior_segments: 8
+  reuse_cache: true
+
+task_threads_induction:
+  input_file_name: activity.jsonl
+  output_file_name: task_threads.json
+  derived_objectives_dir: derived_task_thread_objectives
+  litellm_params:
+    model: openai/gpt-5.4
+    api_key: os.environ/OPENAI_API_KEY
+  llm_timeout_seconds: 120.0
+  discovery_batch_size: 100
+  max_recent_assignments: 10
+  enable_reassignment_review: false
+  reuse_cache: true
+
+hierarchical_objective_induction:
+  input_file_name: task_threads.json
+  output_file_name: hierarchy.json
+  llm_timeout_seconds: 180.0
+  large_node_review_threshold: 20
+  small_decomposition_review_threshold: 5
+  direct_llm_branch:
+    litellm_params:
+      model: openai/gpt-5.4
+      api_key: os.environ/OPENAI_API_KEY
+    direct_llm_max_activities: 50
+  codex_branch:
+    model_reasoning_effort: medium
+    personality: pragmatic
+    command_timeout_seconds: 1200
+    litellm_params:
+      model: openai/gpt-5.4
+      api_key: os.environ/OPENAI_API_KEY
+  workers: 4
+  rebuild_codex_sandbox: false
+  force_per_root_outputs: false
+  reuse_cache: true
+
+procedure_induction_stage:
+  input_dir: derived_task_thread_objectives
+  output_dir: task_thread_procedure_model
+  output_file_name: task_model_with_procedures.json
+  llm_timeout_seconds: 180.0
+  direct_llm_branch:
+    litellm_params:
+      model: openai/gpt-5.4
+      api_key: os.environ/OPENAI_API_KEY
+    direct_llm_max_activities: 50
+  codex_branch:
+    model_reasoning_effort: medium
+    personality: pragmatic
+    command_timeout_seconds: 1200
+    litellm_params:
+      model: openai/gpt-5.4
+      api_key: os.environ/OPENAI_API_KEY
+  max_retries: 3
+  workers: 4
+  rebuild_codex_sandbox: false
+  reuse_cache: true
+
+bidirectional_alignment_stage:
+  objective_output_dir: task_thread_objective_model
+  procedure_output_dir: task_thread_procedure_model
+  output_dir: task_thread_task_model
+  output_file_name: task_model.json
+  llm_timeout_seconds: 180.0
+  direct_llm_branch:
+    direct_llm_max_activities: 50
+    litellm_params:
+      model: openai/gpt-5.4
+      api_key: os.environ/OPENAI_API_KEY
+  codex_branch:
+    model_reasoning_effort: medium
+    personality: pragmatic
+    model_provider: sandbox
+    provider_name: Task Model Induction Sandbox
+    command_timeout_seconds: 1200
+    litellm_params:
+      model: openai/gpt-5.4
+      api_key: os.environ/OPENAI_API_KEY
+  max_retries: 3
+  workers: 4
+  rebuild_codex_sandbox: false
+  reuse_cache: true
+
+action_grounding_service:
+  max_concurrent_requests: 32
+  ocr:
+    model: openai/gpt-5.4-mini
+    api_key: os.environ/OPENAI_API_KEY
+    timeout_secs: 120
+    max_tokens: 16384
+  vlm:
+    model: openai/gpt-5.4-mini
+    api_key: os.environ/OPENAI_API_KEY
+    timeout_secs: 120
+    max_tokens: 16384
+  omniparser:
+    max_concurrent_requests: 2
+    timeout_secs: 180
+    box_threshold: 0.05
+    iou_threshold: 0.1
+    imgsz: 640

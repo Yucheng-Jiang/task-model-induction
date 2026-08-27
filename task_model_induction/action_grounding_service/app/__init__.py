@@ -1,0 +1,1 @@
+"""Action grounding service application."""

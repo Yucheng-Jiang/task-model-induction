@@ -1,0 +1,39 @@
+[project]
+name = "task-model-induction"
+version = "0.1.0"
+description = "Task model induction pipeline and action grounding service."
+requires-python = ">=3.11"
+license = { text = "Apache-2.0" }
+dependencies = [
+  "fastapi>=0.115.0",
+  "httpx>=0.27.0",
+  "litellm>=1.79.0",
+  "pillow>=10.0.0",
+  "pydantic>=2.7.0",
+  "pydantic-ai>=1.0.0",
+  "python-dotenv>=1.0.0",
+  "pyyaml>=6.0.0",
+  "rich>=13.0.0",
+  "uvicorn[standard]>=0.30.0",
+]
+
+[project.scripts]
+action-grounding-service = "action_grounding_service.manage:main"
+
+[build-system]
+requires = ["setuptools>=69", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["action_grounding_service*"]
+
+[project.optional-dependencies]
+test = [
+  "pytest>=8.0.0",
+  "respx>=0.21.0",
+]
+
+[tool.pytest.ini_options]
+testpaths = ["action_grounding_service/tests", "tests"]
+pythonpath = [".."]

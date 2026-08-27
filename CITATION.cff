@@ -1,0 +1,43 @@
+cff-version: 1.2.0
+message: "If you use this software, please cite the paper below."
+title: "Task Model Induction"
+abstract: >-
+  Induce structured task models — hierarchical objectives paired with
+  control-flow procedures — from naturalistic computer-use traces.
+license: Apache-2.0
+repository-code: "https://github.com/Yucheng-Jiang/task-model-induction"
+authors:
+  - family-names: Jiang
+    given-names: Yucheng
+    affiliation: "Stanford University"
+  - family-names: Wang
+    given-names: "Zora Zhiruo"
+    affiliation: "Carnegie Mellon University"
+  - family-names: Chen
+    given-names: Ruishi
+    affiliation: "Stanford University"
+  - family-names: Yang
+    given-names: Diyi
+    affiliation: "Stanford University"
+preferred-citation:
+  type: article
+  title: "Inducing Task Models from Computer-Use Traces"
+  journal: "arXiv preprint arXiv:2608.20319"
+  year: 2026
+  url: "https://arxiv.org/abs/2608.20319"
+  identifiers:
+    - type: other
+      value: "arXiv:2608.20319"
+  authors:
+    - family-names: Jiang
+      given-names: Yucheng
+      affiliation: "Stanford University"
+    - family-names: Wang
+      given-names: "Zora Zhiruo"
+      affiliation: "Carnegie Mellon University"
+    - family-names: Chen
+      given-names: Ruishi
+      affiliation: "Stanford University"
+    - family-names: Yang
+      given-names: Diyi
+      affiliation: "Stanford University"

@@ -1,0 +1,36 @@
+# Secrets
+.env
+.env.local
+
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.venv/
+venv/
+.pytest_cache/
+.ruff_cache/
+
+# Node
+node_modules/
+.next/
+*.tsbuildinfo
+
+# Build output
+dist/
+build/
+out/
+computer-recorder/recorder-ui/resources/backend/
+computer-recorder/recorder-ui/*.spec
+task_model_induction/action_grounding_service/omniparser_server/weights/
+
+# Recorded sessions and derived task models
+recorder_sessions/
+
+# System
+.DS_Store
+.vscode/
+.idea/
+
+# Logs
+*.log

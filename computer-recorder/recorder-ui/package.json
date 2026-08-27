@@ -1,0 +1,100 @@
+{
+    "name": "recorder-ui",
+    "version": "1.0.1",
+    "description": "macOS recorder app for task model induction",
+    "main": "./out/main/index.js",
+    "license": "Apache-2.0",
+    "homepage": "https://github.com/Yucheng-Jiang/task-model-induction",
+    "scripts": {
+        "format": "prettier --write .",
+        "lint": "eslint . --ext .js,.jsx,.cjs,.mjs,.ts,.tsx,.cts,.mts --fix",
+        "start": "electron-vite preview",
+        "dev": "electron-vite dev",
+        "build": "electron-vite build",
+        "postinstall": "electron-builder install-app-deps",
+        "prebuild:mac": "/usr/bin/xattr -cr node_modules/electron",
+        "build:mac": "npm run prebuild:mac && npm run build && electron-builder --mac --config"
+    },
+    "dependencies": {
+        "@electron-toolkit/preload": "^3.0.0",
+        "@electron-toolkit/utils": "^3.0.0"
+    },
+    "devDependencies": {
+        "lucide-react": "^0.300.0",
+        "react": "^18.2.0",
+        "react-dom": "^18.2.0",
+        "@electron-toolkit/eslint-config-prettier": "^2.0.0",
+        "@electron-toolkit/eslint-config-ts": "^2.0.0",
+        "@electron-toolkit/tsconfig": "^1.0.1",
+        "@types/node": "^18.19.9",
+        "@types/react": "^18.2.48",
+        "@types/react-dom": "^18.2.18",
+        "@vitejs/plugin-react": "^4.2.1",
+        "autoprefixer": "^10.4.17",
+        "electron": "^28.2.0",
+        "electron-builder": "^24.9.1",
+        "electron-vite": "^2.0.0",
+        "eslint": "^8.56.0",
+        "eslint-plugin-react": "^7.33.2",
+        "postcss": "^8.4.33",
+        "prettier": "^3.2.4",
+        "tailwindcss": "^3.4.1",
+        "typescript": "^5.3.3",
+        "vite": "^5.0.11"
+    },
+    "build": {
+        "appId": "com.computerrecorder.app",
+        "productName": "ComputerRecorder",
+        "afterPack": "./scripts/afterPack.js",
+        "directories": {
+            "output": "dist"
+        },
+        "files": [
+            "out/**/*",
+            "!out/**/*.map"
+        ],
+        "mac": {
+            "target": [
+                "dmg"
+            ],
+            "hardenedRuntime": true,
+            "gatekeeperAssess": false,
+            "entitlements": "resources/entitlements.mac.plist",
+            "entitlementsInherit": "resources/entitlements.inherit.plist",
+            "extendInfo": {
+                "NSAccessibilityUsageDescription": "This application needs access to accessibility features to record user interactions.",
+                "NSInputMonitoringUsageDescription": "This application needs to monitor input events for recording functionality.",
+                "NSMicrophoneUsageDescription": "This application needs access to the microphone for audio recording.",
+                "NSCameraUsageDescription": "This application needs access to the camera for video recording.",
+                "NSDesktopFolderUsageDescription": "This application needs access to the Desktop folder to save recordings.",
+                "NSDownloadsFolderUsageDescription": "This application needs access to the Downloads folder to save recordings.",
+                "NSDocumentsFolderUsageDescription": "This application needs access to the Documents folder to save recordings."
+            }
+        },
+        "dmg": {
+            "format": "UDBZ",
+            "contents": [
+                {
+                    "x": 410,
+                    "y": 150,
+                    "type": "link",
+                    "path": "/Applications"
+                },
+                {
+                    "x": 130,
+                    "y": 150,
+                    "type": "file"
+                }
+            ]
+        },
+        "extraResources": [
+            {
+                "from": "resources/backend",
+                "to": "backend",
+                "filter": [
+                    "**/*"
+                ]
+            }
+        ]
+    }
+}
